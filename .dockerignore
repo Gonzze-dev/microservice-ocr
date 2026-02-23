@@ -1,0 +1,7 @@
+virtual-env/
+__pycache__/
+*.pyc
+*.pyo
+.git/
+.env
+.gitignore

@@ -1,0 +1,10 @@
+services:
+  ocr-service:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - API_KEY=${API_KEY:-default-api-key-12345}
+    env_file:
+      - .env
+    restart: unless-stopped

@@ -1,0 +1,24 @@
+[project]
+name = "microservice-ocr"
+version = "0.1.0"
+description = "None"
+authors = [
+    {name = "Gonzalo Errandonea"}
+]
+license = {text = "MIT"}
+requires-python = ">=3.13"
+dependencies = [
+    "open-image-models[onnx] (>=0.5.1,<0.6.0)",
+    "paddleocr (>=3.4.0,<4.0.0)",
+    "numpy (>=2.4.2,<3.0.0)",
+    "opencv-python (>=4.13.0.92,<5.0.0.0)",
+    "paddlepaddle (>=3.3.0,<4.0.0)",
+    "fastapi (>=0.132.0,<0.133.0)",
+    "uvicorn (>=0.41.0,<0.42.0)",
+    "python-multipart (>=0.0.22,<0.0.23)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
