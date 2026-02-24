@@ -33,3 +33,6 @@ dev = [
 testpaths = ["tests"]
 pythonpath = ["src"]
 asyncio_mode = "auto"
+markers = [
+    "slow: tests that load ML models and take longer to run",
+]
