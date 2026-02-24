@@ -6,8 +6,6 @@ from errors import AuthErrors
 
 
 async def verify_api_key(x_api_key: str = Header(...)):
-    print(x_api_key)
-    print(API_KEY)
     if x_api_key != API_KEY:
         raise AuthErrors.invalid_api_key()
 
