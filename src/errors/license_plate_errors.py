@@ -3,14 +3,6 @@ from errors.exceptions import ProblemDetailException
 
 class LicensePlateErrors:
     @staticmethod
-    def platform_code_is_required() -> ProblemDetailException:
-        return ProblemDetailException(
-            status=400,
-            title="Platform Code Required",
-            detail="The platform code is required and cannot be empty.",
-        )
-
-    @staticmethod
     def invalid_image() -> ProblemDetailException:
         return ProblemDetailException(
             status=400,
