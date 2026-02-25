@@ -2,22 +2,7 @@ import pytest
 from unittest.mock import MagicMock
 
 from errors.exceptions import ProblemDetailException
-from validators.license_plate import validate_platform_code, validate_single_image
-
-
-class TestValidatePlatformCode:
-    def test_raises_when_platform_code_is_empty(self):
-        with pytest.raises(ProblemDetailException) as exc_info:
-            validate_platform_code("")
-        assert exc_info.value.status == 400
-
-    def test_raises_when_platform_code_is_none(self):
-        with pytest.raises(ProblemDetailException) as exc_info:
-            validate_platform_code(None)
-        assert exc_info.value.status == 400
-
-    def test_does_not_raise_when_platform_code_is_valid(self):
-        validate_platform_code("PLATFORM_01")
+from validators.license_plate import validate_single_image
 
 
 class TestValidateSingleImage:
@@ -27,8 +12,6 @@ class TestValidateSingleImage:
             upload = MagicMock()
             upload.filename = f"image_{i}.jpg"
             items.append(("image", upload))
-
-        items.append(("platform_code", "PLATFORM_01"))
 
         form = MagicMock()
         form.multi_items.return_value = items
