@@ -1,20 +1,6 @@
-VENV_DIR = virtual-env
+include app.mk
+include test.mk
 
-activate:
-	source $(VENV_DIR)/bin/activate
+.PHONY: app-help test-help
 
-install: activate
-	poetry install
-
-start:
-	python src/main.py
-
-test:
-	python -m pytest tests/ -v -m "not slow"
-
-test-all:
-	python -m pytest tests/ -v -s
-
-test-accuracy:
-	python -m pytest tests/unit/test_accuracy.py -v -s
-
+help: app-help test-help
