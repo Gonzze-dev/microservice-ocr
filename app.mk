@@ -15,5 +15,5 @@ activate:
 install:
 	poetry install
 
-start:
+run:
 	python src/main.py
