@@ -1,0 +1,13 @@
+from docs.metadata import API_DESCRIPTION, API_VERSION, LICENSE_INFO, OPENAPI_TAGS, SERVERS
+from docs.health import HEALTH_RESPONSES
+from docs.license_plate import READ_LICENSE_PLATE_RESPONSES
+
+__all__ = [
+    "API_DESCRIPTION",
+    "API_VERSION",
+    "LICENSE_INFO",
+    "OPENAPI_TAGS",
+    "SERVERS",
+    "HEALTH_RESPONSES",
+    "READ_LICENSE_PLATE_RESPONSES",
+]

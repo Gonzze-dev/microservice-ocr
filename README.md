@@ -24,6 +24,8 @@ The processing pipeline consists of two sequential stages:
 
 ## API Reference
 
+The full OpenAPI 3.1 specification is available in [`openapi.yaml`](openapi.yaml). While the service is running, interactive docs are also served at `/docs` (Swagger UI), `/redoc` and `/openapi.json`.
+
 ### `GET /health`
 
 Verifica que el servicio esté en funcionamiento.
@@ -64,7 +66,9 @@ Receives an image and returns the detected license plate text.
 
 | Status | Title | Cause |
 |---|---|---|
-| `401` | Unauthorized | Invalid or missing API key |
+| `400` | Invalid Image | The file could not be decoded as an image |
+| `400` | Multiple Images | More than one file was sent |
+| `401` | Unauthorized | Missing or invalid API key |
 | `422` | License Plate Detection Failed | No plate found in the image |
 | `422` | Low Detection Confidence | Detection confidence below threshold |
 | `422` | Text Extraction Failed | OCR could not read the plate text |

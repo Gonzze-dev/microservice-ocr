@@ -1,0 +1,242 @@
+openapi: 3.1.0
+info:
+  title: Microservice OCR - License Plate Reader
+  version: 1.0.0
+  description: |
+    Microservicio que detecta la patente de un vehículo en una imagen (YOLOv9)
+    y extrae su texto alfanumérico (PaddleOCR).
+
+    Los errores de negocio siguen el estándar
+    [RFC 9457 Problem Details](https://www.rfc-editor.org/rfc/rfc9457)
+    (`application/problem+json`). Los errores de validación de request
+    (campo faltante) los genera FastAPI con su formato propio.
+  license:
+    name: MIT
+    identifier: MIT
+
+servers:
+  - url: /
+    description: Servidor actual
+
+tags:
+  - name: Health
+    description: Estado del servicio
+  - name: License Plate
+    description: Lectura de patentes
+
+paths:
+  /:
+    get:
+      tags: [Health]
+      summary: Redirige a /health
+      operationId: root
+      security: []
+      responses:
+        "307":
+          description: Redirección temporal a `/health`.
+          headers:
+            Location:
+              schema:
+                type: string
+                example: /health
+
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check
+      description: Verifica que el servicio esté en funcionamiento. No requiere autenticación.
+      operationId: healthCheck
+      security: []
+      responses:
+        "200":
+          description: El servicio está activo.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+
+  /read-license-plate:
+    post:
+      tags: [License Plate]
+      summary: Leer la patente de una imagen
+      description: |
+        Recibe **una única** imagen de un vehículo, detecta la región de la patente
+        (umbral de confianza de detección: `0.83`) y devuelve el texto leído.
+        Palabras ajenas a la patente (p. ej. `REPUBLICA ARGENTINA`, `MERCOSUR`)
+        se filtran automáticamente.
+      operationId: readLicensePlate
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [image]
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: Imagen del vehículo (JPG, PNG, etc.). Solo se admite un archivo por request.
+            encoding:
+              image:
+                contentType: image/*
+      responses:
+        "200":
+          description: Patente leída correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LicensePlateResponse"
+              example:
+                license_plate: AB123CD
+        "400":
+          description: La imagen no es válida o se enviaron varios archivos.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              examples:
+                invalidImage:
+                  summary: Archivo que no se puede decodificar como imagen
+                  value:
+                    type: about:blank
+                    title: Invalid Image
+                    status: 400
+                    detail: The uploaded file could not be decoded as a valid image.
+                    instance: http://localhost:8000/read-license-plate
+                multipleImages:
+                  summary: Más de un archivo en el form
+                  value:
+                    type: about:blank
+                    title: Multiple Images
+                    status: 400
+                    detail: Only one image is allowed per request.
+                    instance: http://localhost:8000/read-license-plate
+        "401":
+          description: Falta el header `x-api-key` o la API key es inválida.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              example:
+                type: about:blank
+                title: Unauthorized
+                status: 401
+                detail: The provided API key is invalid or missing.
+                instance: http://localhost:8000/read-license-plate
+        "422":
+          description: |
+            No se pudo procesar la imagen, o el request está incompleto.
+
+            - Errores de procesamiento → `application/problem+json`.
+            - Falta el campo `image` → `application/json`
+              con el formato de validación de FastAPI.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+              examples:
+                noPlateDetected:
+                  summary: No se detectó ninguna patente
+                  value:
+                    type: about:blank
+                    title: License Plate Detection Failed
+                    status: 422
+                    detail: No license plate was detected in the image.
+                    instance: http://localhost:8000/read-license-plate
+                lowConfidence:
+                  summary: Confianza de detección por debajo del umbral
+                  value:
+                    type: about:blank
+                    title: Low Detection Confidence
+                    status: 422
+                    detail: "Confidence threshold not met: 0.61"
+                    instance: http://localhost:8000/read-license-plate
+                ocrImageIsNone:
+                  summary: Recorte de patente nulo
+                  value:
+                    type: about:blank
+                    title: OCR Processing Failed
+                    status: 422
+                    detail: The provided image for OCR processing is null.
+                    instance: http://localhost:8000/read-license-plate
+                textExtractionFailed:
+                  summary: El OCR no pudo leer el texto
+                  value:
+                    type: about:blank
+                    title: Text Extraction Failed
+                    status: 422
+                    detail: Could not extract license plate text from the image.
+                    instance: http://localhost:8000/read-license-plate
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+              example:
+                detail:
+                  - type: missing
+                    loc: [body, image]
+                    msg: Field required
+                    input: null
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: API key configurada en la variable de entorno `API_KEY`.
+
+  schemas:
+    LicensePlateResponse:
+      type: object
+      required: [license_plate]
+      properties:
+        license_plate:
+          type: string
+          description: Texto de la patente detectada.
+          example: AB123CD
+
+    ProblemDetail:
+      type: object
+      description: RFC 9457 Problem Details.
+      required: [type, title, status, detail]
+      properties:
+        type:
+          type: string
+          default: about:blank
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: [string, "null"]
+          description: URL del request que originó el error.
+
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationError"
+
+    ValidationError:
+      type: object
+      required: [loc, msg, type]
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+        input: {}
