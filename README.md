@@ -30,13 +30,13 @@ Verifica que el servicio esté en funcionamiento.
 
 **Autenticación:** no requerida.
 
-**Response — `200 OK`:**
+**Response — `200 OK`** (texto plano):
 
-```json
-{
-  "status": "ok"
-}
 ```
+OK
+```
+
+`GET /` redirige a `/health`.
 
 ---
 
