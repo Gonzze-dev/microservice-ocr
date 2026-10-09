@@ -1,0 +1,7 @@
+.git
+.env
+virtual-env
+tests
+user-stories
+.pytest_cache
+**/__pycache__
