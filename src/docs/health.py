@@ -1,6 +1,6 @@
 HEALTH_RESPONSES = {
     200: {
-        "description": "El servicio está activo.",
+        "description": "The service is up.",
         "content": {"text/plain": {"example": "OK"}},
     },
 }

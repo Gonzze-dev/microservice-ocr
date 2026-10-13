@@ -15,7 +15,7 @@ async def root():
     "/health",
     response_class=PlainTextResponse,
     summary="Health check",
-    description="Verifica que el servicio esté en funcionamiento. No requiere autenticación.",
+    description="Checks that the service is up. Requires no authentication.",
     responses=HEALTH_RESPONSES,
     openapi_extra={"security": []},
 )

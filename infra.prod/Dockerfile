@@ -1,4 +1,4 @@
-# Build context: raíz del repo (docker build -f infra.prod/Dockerfile .)
+# Build context: repo root (docker build -f infra.prod/Dockerfile .)
 # En Railway: RAILWAY_DOCKERFILE_PATH=infra.prod/Dockerfile
 
 FROM python:3.13-slim
@@ -23,8 +23,8 @@ RUN poetry config virtualenvs.create false \
 COPY src/ ./src/
 WORKDIR /app/src
 
-# Descarga los modelos (detector de patentes + PaddleOCR) durante el build
-# para no bajarlos en cada arranque del contenedor.
+# Downloads the models (license plate detector + PaddleOCR) during the build
+# so they are not fetched on every container start.
 RUN python -c "from services import LicensePlateDetector, OCR; LicensePlateDetector(); OCR()"
 
 EXPOSE 8000

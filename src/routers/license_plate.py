@@ -16,23 +16,23 @@ router = APIRouter(tags=["License Plate"])
     "/read-license-plate",
     response_model=LicensePlateResponse,
     dependencies=[Depends(verify_api_key)],
-    summary="Leer la patente de una imagen",
+    summary="Read the license plate from an image",
     responses=READ_LICENSE_PLATE_RESPONSES,
 )
 async def read_license_plate(
     request: Request,
     image: UploadFile = File(
         ...,
-        description="Imagen del vehículo (JPG, PNG, etc.). Solo se admite un archivo por request.",
+        description="Vehicle image (JPG, PNG, etc.). Only one file per request is accepted.",
     ),
     lp_detector: ILicensePlateDetector = Depends(get_license_plate_detector),
     ocr: IOCR = Depends(get_ocr),
 ):
     """
-    Recibe **una única** imagen de un vehículo, detecta la región de la patente
-    (umbral de confianza de detección: `0.83`) y devuelve el texto leído.
-    Palabras ajenas a la patente (p. ej. `REPUBLICA ARGENTINA`, `MERCOSUR`)
-    se filtran automáticamente.
+    Receives **a single** vehicle image, detects the license plate region
+    (detection confidence threshold: `0.83`) and returns the text read.
+    Words unrelated to the plate (e.g. `REPUBLICA ARGENTINA`, `MERCOSUR`)
+    are filtered out automatically.
     """
     form = await request.form()
 

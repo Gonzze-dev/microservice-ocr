@@ -8,7 +8,7 @@ from errors import AuthErrors
 api_key_header = APIKeyHeader(
     name="x-api-key",
     scheme_name="ApiKeyAuth",
-    description="API key configurada en la variable de entorno `API_KEY`.",
+    description="API key configured in the `API_KEY` environment variable.",
     auto_error=False,
 )
 

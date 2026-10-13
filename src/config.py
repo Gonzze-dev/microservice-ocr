@@ -2,7 +2,7 @@ import os
 
 API_KEY = os.getenv("API_KEY", "default-api-key-12345")
 
-# Orígenes separados por coma. Vacío = se permiten todos.
+# Comma-separated origins. Empty = all are allowed.
 CORS_ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")

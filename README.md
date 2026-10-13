@@ -28,17 +28,17 @@ The full OpenAPI 3.1 specification is available in [`openapi.yaml`](openapi.yaml
 
 ### `GET /health`
 
-Verifica que el servicio esté en funcionamiento.
+Checks that the service is up.
 
-**Autenticación:** no requerida.
+**Authentication:** not required.
 
-**Response — `200 OK`** (texto plano):
+**Response — `200 OK`** (plain text):
 
 ```
 OK
 ```
 
-`GET /` redirige a `/health`.
+`GET /` redirects to `/health`.
 
 ---
 

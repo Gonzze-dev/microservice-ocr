@@ -30,7 +30,7 @@ class LicensePlateDetector(ILicensePlateDetector):
         detections,
         name_img="debug_bounding_boxes.png"
     ):
-        """Provisorio: dibuja los puntos del bounding box. Rojo = X, Verde = Y."""
+        """Temporary: draws the bounding box points. Red = X, Green = Y."""
         img_copy = image.copy()
         radius = 8
         thickness = -1
@@ -41,13 +41,13 @@ class LicensePlateDetector(ILicensePlateDetector):
 
         for detection in detections:
             x1, y1, x2, y2 = map(int, tuple(detection.bounding_box))
-            cv2.circle(img_copy, (x1, y1), radius, color=red, thickness=-1) # Rojo
-            cv2.circle(img_copy, (x2, y1), radius, color=yellow, thickness=-1) # Amarillo
-            cv2.circle(img_copy, (x1, y2), radius, color=green, thickness=-1) # Verde
-            cv2.circle(img_copy, (x2, y2), radius, color=blue, thickness=-1) # Azul
+            cv2.circle(img_copy, (x1, y1), radius, color=red, thickness=-1) # Red
+            cv2.circle(img_copy, (x2, y1), radius, color=yellow, thickness=-1) # Yellow
+            cv2.circle(img_copy, (x1, y2), radius, color=green, thickness=-1) # Green
+            cv2.circle(img_copy, (x2, y2), radius, color=blue, thickness=-1) # Blue
 
         cv2.imwrite(name_img, img_copy)
-        print(f"Imagen guardada en {name_img}")
+        print(f"Image saved to {name_img}")
         return img_copy
 
     def _select_largest_plate_by_axis_Y(self, detections):

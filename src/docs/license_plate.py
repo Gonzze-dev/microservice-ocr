@@ -3,8 +3,8 @@ from errors import AuthErrors, LicensePlateErrors, LPDetectorErrors, OCRErrors
 
 _INSTANCE = "http://localhost:8000/read-license-plate"
 
-# Declarar el 422 a mano evita que FastAPI agregue su 422 de validación,
-# así que el esquema de HTTPValidationError se documenta acá.
+# Declaring the 422 by hand stops FastAPI from adding its validation 422,
+# so the HTTPValidationError schema is documented here.
 _VALIDATION_ERROR_CONTENT = {
     "application/json": {
         "schema": {
@@ -39,8 +39,8 @@ _VALIDATION_ERROR_CONTENT = {
 }
 
 _unprocessable = problem_response(
-    "No se pudo procesar la imagen (`application/problem+json`), "
-    "o falta el campo `image` (`application/json`, formato de validación de FastAPI).",
+    "The image could not be processed (`application/problem+json`), "
+    "or the `image` field is missing (`application/json`, FastAPI validation format).",
     _INSTANCE,
     LPDetectorErrors.no_plate_detected(),
     LPDetectorErrors.low_confidence(0.61),
@@ -51,17 +51,17 @@ _unprocessable["content"].update(_VALIDATION_ERROR_CONTENT)
 
 READ_LICENSE_PLATE_RESPONSES = {
     200: {
-        "description": "Patente leída correctamente.",
+        "description": "License plate read successfully.",
         "content": {"application/json": {"example": {"license_plate": "AB123CD"}}},
     },
     400: problem_response(
-        "La imagen no es válida o se enviaron varios archivos.",
+        "The image is not valid or several files were sent.",
         _INSTANCE,
         LicensePlateErrors.invalid_image(),
         LicensePlateErrors.multiple_images(),
     ),
     401: problem_response(
-        "Falta el header `x-api-key` o la API key es inválida.",
+        "The `x-api-key` header is missing or the API key is invalid.",
         _INSTANCE,
         AuthErrors.invalid_api_key(),
     ),
