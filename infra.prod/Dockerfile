@@ -16,6 +16,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 RUN pip install poetry
+
+# The app gets its own venv so its dependencies don't get mixed with Poetry's
+# (requests, charset-normalizer...) in the system site-packages.
+ENV VIRTUAL_ENV=/opt/venv \
+    PATH="/opt/venv/bin:$PATH"
+RUN python -m venv /opt/venv
+
 COPY pyproject.toml poetry.lock ./
 RUN poetry config virtualenvs.create false \
     && poetry install --only main --no-interaction --no-ansi --no-root
